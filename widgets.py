@@ -61,8 +61,17 @@ class Plot(Static):
 
 class FarmGrid(Container):
     def compose(self):
-        for _ in range(25):
-            yield Plot()
+        if game_state.grid_state and len(game_state.grid_state) == 25:
+            for data in game_state.grid_state:
+                p = Plot()
+                p.state = data["state"]
+                p.watered = data["watered"]
+                p.crop_id = data["crop_id"]
+                p.days_grown = data["days_grown"]
+                yield p
+        else: 
+            for _ in range(25):
+                yield Plot()
 
 class Toolbar(Horizontal):
     def compose(self):
@@ -101,11 +110,11 @@ class HUD(Static):
         text = "\n Seeds: \n"
         for cid, count in game_state.inventory_seeds.items():
             if count > 0:
-                text += f"- {CROPS[cod].seed_emoji} {CROPS[cid].name}: {count}\n"
+                text += f"- {CROPS[cid].seed_emoji} {CROPS[cid].name}: {count}\n"
 
         text += "\n📦 Crops: \n"
         for cid, count in game_state.inventory_crops.items():
             if count > 0:
                 text += f"- {CROPS[cid].emoji} {CROPS[cid].name}: {count}\n"
 
-        self.query_one("#hud-invenvoy", Static).update(text)
+        self.query_one("#hud-inventory", Static).update(text)

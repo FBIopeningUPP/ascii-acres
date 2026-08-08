@@ -12,6 +12,9 @@ class ShopScreen(ModalScreen):
     .shop-row { height: 3; align: left middle; }
     .shop-item-name { width: 25; }
     """
+    BINDINGS = [
+        ("escape", "close_shop", "Close Shop")
+    ]
 
     def compose(self) -> ComposeResult:
         with Vertical(id="shop-dialog"):
@@ -68,3 +71,7 @@ class ShopScreen(ModalScreen):
                 btn.label = f"Sell (Have: {count})"
 
         self.app.query_one("HUD").refresh_inventory()
+
+    def action_close_shop(self) -> None:
+        """Closes The Shop when escape is pressed."""
+        self.app.pop_screen()

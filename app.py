@@ -77,3 +77,19 @@ class ASCIIAcresApp(App):
 
             plot.watered = (game_state.weather == "Rainy")
         self.notify(f"Good morning! It is now {game_state.season} Day {game_state.day}.")
+
+    def action_save_game(self) -> None:
+        """Saves the game when ctrl+s is presed."""
+        from widgets import Plot
+        grid_data = []
+        for plot in self.query(Plot):
+            grid_data.append({
+                "state": plot.state,
+                "watered": plot.watered,
+                "crop_id": plot.crop_id,
+                "days_grown": plot.days_grown
+            })
+
+        game_state.grid_state = grid_data
+        game_state.save()
+        self.notify("Game and saved succeful")
