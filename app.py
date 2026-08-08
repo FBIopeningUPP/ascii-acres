@@ -58,19 +58,22 @@ class ASCIIAcresApp(App):
         self.push_screen(ShopScreen())
 
     def action_next_day(self) -> None:
-        game_state.day += 1
-        self.query_one("#hud-day", Static).update(f"☀️ Day: {game_state.day}")
-        
-        # Loop through every single plot on the farm
+        game_state.advance_time()
+        self.query_one("#hud-day", Static).update(f"📅 {game_state.season}, Day {game_state.day}")
+        self.query_one("#hud-weather", Static).update(f"☁️ Weather: {game_state.weather}")
+
         for plot in self.query(Plot):
-            if plot.state == "planted" and plot.watered:
-                plot.days_grown += 1
-                crop_data = CROPS[plot.crop_id]
-                
-                if plot.days_grown >= crop_data.growth_days:
-                    plot.state = "ready"
-            
-            # The sun comes out and dries the soil
-            plot.watered = False
-            
-        self.notify(f"Good morning! It is now Day {game_state.day}.")
+            if plot.state == "planted":
+                if game_state.season not in CROPS[plot.crop_id].seasons:
+                    plot.state = "dirt"
+                    plot.watered = False
+                    plot.crop_id = ""
+                    continue
+
+                if plot.watered:
+                    plot.days_grown += 1
+                    if plot.days_grown >= CROPS[plot.crop_id].growth_days:
+                        plot.state = "ready"
+
+            plot.watered = (game_state.weather == "Rainy")
+        self.notify(f"Good morning! It is now {game_state.season} Day {game_state.day}.")

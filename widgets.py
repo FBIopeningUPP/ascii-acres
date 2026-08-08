@@ -43,7 +43,8 @@ class Plot(Static):
                 self.crop_id = "parsnip"
                 self.days_grown = 0
                 game_state.inventory_seeds["parsnip"] -= 1
-                self.app.query_one("#inv-seeds", Static).update(f"- 🫘 Seeds: {game_state.inventory_seeds['parsnip']}")
+                self.app.query_one(HUD).refresh_inventory()
+                self.app.notify("Planted a parsnip!")
             else:
                 self.app.notify("You are out of seeds! Buy more in the shop.", severity="error")
         elif tool == "water" and self.state in ["tilled", "planted"]:
@@ -88,7 +89,23 @@ class Toolbar(Horizontal):
 class HUD(Static):
     def compose(self):
         yield Static(f"💰 Money: ${game_state.money}", id="hud-money")
-        yield Static(f"☀️ Day: {game_state.day}", id="hud-day")
-        yield Static("\n🎒 Inventory:", id="hud-inventory-title")
-        yield Static(f"- 🫘 Seeds: {game_state.inventory_seeds.get('parsnip', 0)}", id="inv-seeds")
-        yield Static(f"- 🌾 Crops: {game_state.inventory_crops.get('parsnip', 0)}", id="inv-crops")
+        yield Static(f"📅 {game_state.season}, Day {game_state.day}", id="hud-day")
+        yield Static(f"☁️ Weather: {game_state.weather}", id="hud-weather")
+        yield Static("", id="hud-inventory")
+
+    def on_mount(self):
+        self.refresh_inventory()
+
+    def refresh_inventory(self):
+        """Builds the inventory text and slaps it into the widget in onge go."""
+        text = "\n Seeds: \n"
+        for cid, count in game_state.inventory_seeds.items():
+            if count > 0:
+                text += f"- {CROPS[cod].seed_emoji} {CROPS[cid].name}: {count}\n"
+
+        text += "\n📦 Crops: \n"
+        for cid, count in game_state.inventory_crops.items():
+            if count > 0:
+                text += f"- {CROPS[cid].emoji} {CROPS[cid].name}: {count}\n"
+
+        self.query_one("#hud-invenvoy", Static).update(text)
