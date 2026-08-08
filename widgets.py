@@ -53,7 +53,7 @@ class Plot(Static):
             self.state = "dirt"
             self.watered = False
             game_state.inventory_crops[self.crop_id] = game_state.inventory_crops.get(self.crop_id, 0) + 1
-            self.app.query_one("#inv-crops", Static).update(f"- 🌾 Crops: {game_state.inventory_crops[self.crop_id]}")
+            self.app.query_one(HUD).refresh_inventory
             self.app.notify(f"Harvested a {CROPS[self.crop_id].name}!")
             self.crop_id = ""
         else:

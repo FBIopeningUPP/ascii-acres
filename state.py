@@ -51,7 +51,7 @@ class GameState:
                 self.money = data.get("money", 100)
                 self.day = data.get("day", 1)
                 self.season = data.get("season", "Spring")
-                self.season = data.get("weather", "Sunny")
+                self.weather = data.get("weather", "Sunny")
                 self.inventory_seeds = data.get("inventory_seeds", {"parsnip" : 5, "potato": 2})
                 self.inventory_crops = data.get("inventory_crops", {})
 

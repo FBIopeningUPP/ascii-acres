@@ -66,3 +66,5 @@ class ShopScreen(ModalScreen):
                 cid = btn.id.split("_")[1]
                 count = game_state.inventory_crops.get(cid, 0)
                 btn.label = f"Sell (Have: {count})"
+
+        self.app.query_one("HUD").refresh_inventory()
