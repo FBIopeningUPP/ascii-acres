@@ -1,0 +1,40 @@
+{
+    "money": 9999999,
+    "day": 15,
+    "season": "Summer",
+    "weather": "Sunny",
+    "inventory_seeds": {
+        "parsnip": 99,
+        "potato": 99,
+        "strawberry": 99,
+        "tomato": 99,
+        "corn": 99,
+        "sunflower": 99,
+        "pumpkin": 99,
+        "eggplant": 99,
+        "grapes": 99
+    },
+    "inventory_crops": {
+        "parsnip": 50,
+        "potato": 50,
+        "strawberry": 50,
+        "tomato": 50,
+        "corn": 50,
+        "sunflower": 50,
+        "pumpkin": 50,
+        "eggplant": 50,
+        "grapes": 50
+    },
+    "grid_state": [],
+    "inventory_animal_products": {
+        "egg": 99,
+        "milk": 99
+    },
+    "barn_animals": [
+        {"type": "chicken", "name": "Chicken", "emoji": "🐔", "product": "egg", "product_name": "Egg", "fed_today": false},
+        {"type": "chicken", "name": "Chicken", "emoji": "🐔", "product": "egg", "product_name": "Egg", "fed_today": false},
+        {"type": "cow", "name": "Cow", "emoji": "🐮", "product": "milk", "product_name": "Milk", "fed_today": false},
+        {"type": "cow", "name": "Cow", "emoji": "🐮", "product": "milk", "product_name": "Milk", "fed_today": false}
+    ],
+    "steel_tools": true
+}

@@ -1,5 +1,5 @@
 from textual.containers import Container, Horizontal
-from textual.widgets import Static, Button
+from textual.widgets import Static, Button, Select
 from textual.reactive import reactive
 from state import game_state
 from crops import CROPS
@@ -38,22 +38,39 @@ class Plot(Static):
         if tool == "hoe" and self.state == "dirt":
             self.state = "tilled"
         elif tool == "seed" and self.state == "tilled":
-            if game_state.inventory_seeds.get("parsnip", 0) > 0:
+            # ponytail: plant whatever seed the dropdown has selected!
+            seed_to_plant = self.app.selected_seed
+            
+            if game_state.inventory_seeds.get(seed_to_plant, 0) > 0:
                 self.state = "planted"
-                self.crop_id = "parsnip"
+                self.crop_id = seed_to_plant
                 self.days_grown = 0
-                game_state.inventory_seeds["parsnip"] -= 1
+                game_state.inventory_seeds[seed_to_plant] -= 1
+                
                 self.app.query_one(HUD).refresh_inventory()
-                self.app.notify("Planted a parsnip!")
+                self.app.notify(f"Planted a {CROPS[seed_to_plant].name}!")
             else:
-                self.app.notify("You are out of seeds! Buy more in the shop.", severity="error")
-        elif tool == "water" and self.state in ["tilled", "planted"]:
-            self.watered = True
+                self.app.notify(f"You don't have any {CROPS[seed_to_plant].name} seeds!", severity="error")
+        elif tool == "water":
+            if game_state.steel_tools:
+                plots=list(self.parent.children)
+                idx = plots.index(self)
+                x, y = idx % 5, idx // 5
+                for dx in [-1, 0, 1]:
+                    for dy in [-1, 0, 1]:
+                        nx, ny = x + dx, y + dy
+                        if 0 <= nx < 5 and 0 <= ny < 5:
+                            neighbor = plots[ny * 5 + nx]
+                            if neighbor.state in ["tilled", "planted"]:
+                                neighbor.watered = True
+            elif self.state in ["tilled", "planted"]:
+                self.watered = True
+
         elif tool == "scythe" and self.state == "ready":
             self.state = "dirt"
             self.watered = False
             game_state.inventory_crops[self.crop_id] = game_state.inventory_crops.get(self.crop_id, 0) + 1
-            self.app.query_one(HUD).refresh_inventory
+            self.app.query_one(HUD).refresh_inventory()
             self.app.notify(f"Harvested a {CROPS[self.crop_id].name}!")
             self.crop_id = ""
         else:
@@ -76,7 +93,12 @@ class FarmGrid(Container):
 class Toolbar(Horizontal):
     def compose(self):
         yield Button("⛏️ Hoe", id="btn-hoe", variant="primary")
-        yield Button("🫘 Seeds", id="btn-seed", variant="default")
+        yield Button("🫘 Plant Seed", id="btn-seed", variant="default")
+        
+        # ponytail: Drop a native dropdown menu in for seed selection
+        options = [(f"{CROPS[c].seed_emoji} {CROPS[c].name}", c) for c in CROPS]
+        yield Select(options, id="seed_select", value="parsnip")
+        
         yield Button("💧 Water", id="btn-water", variant="default")
         yield Button("🪝 Scythe", id="btn-scythe", variant="default")
         
@@ -94,6 +116,10 @@ class Toolbar(Horizontal):
             self.app.selected_tool = "water"
         elif tool_id == "btn-scythe":
             self.app.selected_tool = "scythe"
+
+    def on_select_changed(self, event: Select.Changed) -> None:
+        """When the dropdown changes, update the app's selected seed."""
+        self.app.selected_seed = event.value
 
 class HUD(Static):
     def compose(self):

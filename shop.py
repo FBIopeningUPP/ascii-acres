@@ -33,6 +33,13 @@ class ShopScreen(ModalScreen):
             with Horizontal(classes="shop-row"):
                 yield Static("🐮 Cow (-$1500)", classes="shop-item-name")
                 yield Button("Buy", id="buy_animal_cow", variant="success")
+
+            yield Static("\n--- Blacksmith Upgrades ---")
+            with Horizontal(classes="shop-row"):
+                status = "✅ Purchased" if game_state.steel_tools else "❌ Not Owned"
+                yield Static(f"🚿 Steel Watering Can (-$5000) [{status}]", classes="shop-item-name")
+                if not game_state.steel_tools:
+                    yield Button("Upgrade", id="buy_upgrade_steel", variant="success")
             
             yield Static("\n--- Sell Crops & Products ---")
             for crop_id, crop in CROPS.items():
@@ -60,8 +67,8 @@ class ShopScreen(ModalScreen):
             return
             
         parts = button_id.split("_")
-        action = parts[0] # "buy" or "sell"
-        category = parts[1] # "seed", "crop", "animal", or "product"
+        action = parts[0] 
+        category = parts[1] 
         item_id = parts[2]
         
         if action == "buy":
@@ -83,6 +90,14 @@ class ShopScreen(ModalScreen):
                     else:
                         game_state.barn_animals.append({"type": "cow", "name": "Cow", "emoji": "🐮", "product": "milk", "product_name": "Milk", "fed_today": False})
                     self.app.notify(f"Bought a {item_id}!")
+                else:
+                    self.app.notify("Not enough money!", severity="error")
+
+            elif category == "upgrade":
+                if game_state.money >= 5000:
+                    game_state.money -= 5000
+                    game_state.steel_tools = True
+                    self.app.notify("Upgraded to Steel Watering Can!")
                 else:
                     self.app.notify("Not enough money!", severity="error")
                     

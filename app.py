@@ -13,29 +13,45 @@ class ASCIIAcresApp(App):
     TITLE = "ASCII Acres"
     
     selected_tool = reactive("hoe")
+    selected_seed = reactive("parsnip")
     money_tracker = reactive(game_state.money) 
     
     CSS = """
-    Screen { layout: horizontal; }
+    Screen { background: #1e1e2e; }
     
     #sidebar {
-        width: 30%; height: 100%; dock: left;
-        padding: 1 2; background: $boost; border-right: solid $accent;
+        width: 25%; height: 100%; dock: left;
+        padding: 2; background: #181825; 
+        border-right: thick #89b4fa; color: #cdd6f4;
     }
+
+    #sidebar Static { margin-bottom: 1; }
     
-    #main-farm { width: 70%; height: 100%; align: center middle; }
+    #main-farm { 
+        width: 75%; height: 100%; 
+        align: center middle; background: #1e1e2e; 
+    }
     
     FarmGrid {
-        layout: grid; grid-size: 5 5; grid-columns: 4; grid-rows: 2;
-        grid-gutter: 1 2; width: 32; height: 17;
-        border: thick $primary; padding: 1; background: $surface;
+        layout: grid; grid-size: 5 5; grid-columns: 6; grid-rows: 3;
+        grid-gutter: 1; width: 40; height: 20;
+        border: double #a6e3a1; padding: 1; background: #313244;
     }
     
-    Plot { width: 100%; height: 100%; content-align: center middle; background: $panel; }
-    Plot:hover { background: $accent; color: $text; }
+    Plot { 
+        width: 100%; height: 100%; content-align: center middle; 
+        background: #45475a; border: solid #585b70;
+    }
     
-    Toolbar { height: 3; width: 45; margin-top: 2; align: center middle; }
-    Button { margin: 0 1; }
+    Plot:hover { background: #89b4fa; border: solid #b4befe; }
+    
+    Toolbar { 
+        height: 5; width: 100%; margin-top: 3; 
+        align: center middle; 
+    }
+    
+    Button { margin: 0 1; min-width: 14; }
+    Select { width: 30; margin: 0 1; }
     """
 
     BINDINGS = [
