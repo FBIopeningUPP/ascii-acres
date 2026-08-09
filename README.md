@@ -3,7 +3,8 @@
 **ASCII Acres** is a massive-scope, fully-featured terminal-based farming simulator inspired by Stardew Valley, built entirely in Python using the Textual TUI framework. It features a full day/night/season cycle, a dynamic shop, animal husbandry, a 5x5 saveable farming grid, and progressive tool upgrades (like the 3x3 Steel Watering Can).
 
 ## Why I Made This
-I wanted to challenge myself to build a complex, state-driven game using only terminal UI elements. Most terminal games are very simple, but I wanted to prove that you could create a rich, relaxing, long-form farming game with saving, loading, economy, and dynamic weather, right inside the command line. This project was built for my Macondo submission to push my Python and UI layout skills to the limit!
+made this cause i was bored and needed fpv drone parts
+i was very amazed seeing cli games so i wanted to make one for myself
 
 ## How to Use It
 1. Clone this repository and navigate into the folder.
