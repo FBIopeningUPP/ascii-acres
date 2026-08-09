@@ -26,7 +26,10 @@ class ShopScreen(ModalScreen):
                     yield Static(f"{crop.seed_emoji} {crop.name} Seeds (-${crop.buy_price})", classes="shop-item-name")
                     yield Button("Buy", id=f"buy_seed_{crop_id}", variant="success")
                     
-            yield Static("\n--- Buy Animals ---")
+            yield Static("\n--- Buy Animals & Feed ---")
+            with Horizontal(classes="shop-row"):
+                yield Static("🌾 Animal Feed (-$5)", classes="shop-item-name")
+                yield Button("Buy", id="buy_feed_animal", variant="success")
             with Horizontal(classes="shop-row"):
                 yield Static("🐔 Chicken (-$500)", classes="shop-item-name")
                 yield Button("Buy", id="buy_animal_chicken", variant="success")
@@ -92,6 +95,14 @@ class ShopScreen(ModalScreen):
                     self.app.notify(f"Bought a {item_id}!")
                 else:
                     self.app.notify("Not enough money!", severity="error")
+                    
+            elif category == "feed":
+                if game_state.money >= 5:
+                    game_state.money -= 5
+                    game_state.animal_feed += 1
+                    self.app.notify("Bought 1 Animal Feed!")
+                else:
+                    self.app.notify("Not enough money!", severity="error")
 
             elif category == "upgrade":
                 if game_state.money >= 5000:
@@ -122,6 +133,10 @@ class ShopScreen(ModalScreen):
                 
         # Update the UI state
         self.app.money_tracker = game_state.money
+        try:
+            self.app.query_one("HUD").refresh_inventory()
+        except:
+            pass
         
         # refresh the whole shop by quickly popping and pushing it to update the "Have: X" text
         self.app.pop_screen()

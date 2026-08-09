@@ -99,6 +99,12 @@ class ASCIIAcresApp(App):
                         plot.state = "ready"
 
             plot.watered = (game_state.weather == "Rainy")
+
+        for animal in game_state.barn_animals:
+            if animal.get("fed_today", False):
+                animal["has_product"] = True
+                animal["fed_today"] = False
+
         self.notify(f"Good morning! It is now {game_state.season} Day {game_state.day}.")
 
     def action_save_game(self) -> None:
@@ -115,4 +121,4 @@ class ASCIIAcresApp(App):
 
         game_state.grid_state = grid_data
         game_state.save()
-        self.notify("Game and saved succeful")
+        self.notify("Game saved successfully!")

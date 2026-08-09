@@ -7,7 +7,7 @@ from state import game_state
 class BarnScreen(ModalScreen):
     CSS = """
     BarnScreen { align: center middle; background: rgba(0, 0, 0, 0.7); }
-    #barn-dialog { width: 60; height: 25; background: $surface; border: thick$accent; padding: 1 2;}
+    #barn-dialog { width: 60; height: 80%; background: $surface; border: thick $accent; padding: 1 2; overflow-y: auto;}
     .animal-row { height: 3; align: left middle; }
     """
 
@@ -17,6 +17,8 @@ class BarnScreen(ModalScreen):
         with Vertical(id="barn-dialog"):
             yield Static("🏚️ Welcome to the Barn! (Press ESC to exit)\n")
         
+        
+            yield Static(f"🌾 Animal Feed: {game_state.animal_feed}")
             if not game_state.barn_animals:
                 yield Static("It is empty in here! Buy animals in the shop.")
             else:
@@ -27,8 +29,10 @@ class BarnScreen(ModalScreen):
 
                         if not animal["fed_today"]:
                             yield Button("Feed", id=f"feed_{idx}", variant="primary")
-                        else:
+                        elif animal.get("has_product", False):
                             yield Button(f"Collect {animal['product_name']}", id=f"collect_{idx}", variant="success")
+                        else:
+                            yield Static("   (Full)", classes="animal-lbl")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         action, idx_str = event.button.id.split("_")
@@ -36,15 +40,19 @@ class BarnScreen(ModalScreen):
         animal = game_state.barn_animals[idx]
 
         if action == "feed":
-            animal["fed_today"] = True
-            self.app.notify(f"Fed the {animal['name']}!")
+            if game_state.animal_feed > 0:
+                game_state.animal_feed -= 1
+                animal["fed_today"] = True
+                self.app.notify(f"Fed the {animal['name']}!")
+            else:
+                self.app.notify("Out of Animal Feed! Buy it in the shop.", severity="error")
             self.app.pop_screen()
             self.app.push_screen(BarnScreen())
 
         elif action == "collect":
-            if animal["fed_today"]:
+            if animal.get("has_product", False):
                 game_state.inventory_animal_products[animal["product"]] += 1
-                animal["fed_today"] = False
+                animal["has_product"] = False
                 self.app.notify(f"Collected 1 {animal['product_name']}!")
                 self.app.pop_screen()
                 self.app.push_screen(BarnScreen())
