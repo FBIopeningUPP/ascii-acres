@@ -13,6 +13,9 @@ class GameState:
         self.inventory_crops = {}
         self.grid_state = []
 
+        self.inventory_animal_products = {"egg":0, "milk": 0}
+        self.barn_animals = []
+
     def generate_tomorrow_weather(self):
         if random.random() < 0.2:
             self.weather = "Rainy"
@@ -40,7 +43,9 @@ class GameState:
             "weather": self.weather,
             "inventory_seeds": self.inventory_seeds,
             "inventory_crops": self.inventory_crops,
-            "grid_state": self.grid_state
+            "grid_state": self.grid_state,
+            "inventory_animal_products": self.inventory_animal_products,
+            "barn_animals": self.barn_animals
         }
         with open("save_game.json", "w") as f:
             json.dump(data, f)
@@ -56,6 +61,7 @@ class GameState:
                 self.inventory_seeds = data.get("inventory_seeds", {"parsnip" : 5, "potato": 2})
                 self.inventory_crops = data.get("inventory_crops", {})
                 self.grid_state = data.get("grid_state", [])
+                self.inventory_animal_products = data.get("inventory_animal_products", {"egg":0, "milk":0})
 
 game_state = GameState()
 game_state.load()

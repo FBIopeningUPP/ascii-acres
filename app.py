@@ -7,6 +7,7 @@ from widgets import HUD, FarmGrid, Toolbar, Plot
 from shop import ShopScreen
 from state import game_state
 from crops import CROPS
+from barn import BarnScreen
 
 class ASCIIAcresApp(App):
     TITLE = "ASCII Acres"
@@ -40,7 +41,9 @@ class ASCIIAcresApp(App):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("s", "shop", "Open Shop"),
-        ("n", "next_day", "Next Day")
+        ("n", "next_day", "Next Day"),
+        ("ctrl+s", "save_game", "Save Game"),
+        ("b", "barn", "Open Barn")
     ]
 
     def compose(self) -> ComposeResult:
@@ -56,6 +59,10 @@ class ASCIIAcresApp(App):
 
     def action_shop(self) -> None:
         self.push_screen(ShopScreen())
+
+    def action_barn(self) -> None:
+        """Opens the Barn Screen."""
+        self.push_screen(BarnScreen())
 
     def action_next_day(self) -> None:
         game_state.advance_time()
